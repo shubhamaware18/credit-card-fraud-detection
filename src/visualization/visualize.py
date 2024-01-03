@@ -8,6 +8,7 @@ from sklearn import tree
 from dvclive import Live
 from matplotlib import pyplot as plt
 
+
 def evaluate(model, X, y, split, live, save_path):
     """
     Dump all evaluation metrics and plots for given datasets.
@@ -21,26 +22,21 @@ def evaluate(model, X, y, split, live, save_path):
         save_path (str): Path to save the metrics.
     """
 
-    # making variable to store predictions
     predictions_by_class = model.predict_proba(X)
     predictions = predictions_by_class[:, 1]
 
     # Use dvclive to log a few simple metrics...
     avg_prec = metrics.average_precision_score(y, predictions)
     roc_auc = metrics.roc_auc_score(y, predictions)
-
     if not live.summary:
-        live.summary = {'avg_prec': {}, 'roc_auc' : {}}
+        live.summary = {"avg_prec": {}, "roc_auc": {}}
     live.summary["avg_prec"][split] = avg_prec
     live.summary["roc_auc"][split] = roc_auc
-    
-    # ...PLOTS...
-
-    # ROC plot
+    # ... and plots...
+    # ... like an roc plot...
     live.log_sklearn_plot("roc", y, predictions, name=f"roc/{split}")
-
-
-    # precision recall plot which passes `drop_intermediate=True` to the sklearn method...
+    # ... and precision recall plot...
+    # ... which passes `drop_intermediate=True` to the sklearn method...
     live.log_sklearn_plot(
         "precision_recall",
         y,
@@ -48,8 +44,7 @@ def evaluate(model, X, y, split, live, save_path):
         name=f"prc/{split}",
         drop_intermediate=True,
     )
-
-    # confusion matrix plot
+    # ... and confusion matrix plot
     live.log_sklearn_plot(
         "confusion_matrix",
         y,
